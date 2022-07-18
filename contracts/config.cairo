@@ -1,0 +1,4 @@
+%lang starknet
+
+const DECIMALS = 1000000000000000000  # 10 x 10^18
+const PRECISION = 1000000000  # 10 x 10^9
