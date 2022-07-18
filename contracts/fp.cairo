@@ -5,7 +5,8 @@
 %lang starknet
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
-from starkware.cairo.common.uint256 import Uint256
+from starkware.cairo.common.uint256 import Uint256, uint256_eq
+from starkware.cairo.common.bool import TRUE, FALSE
 from openzeppelin.security.safemath import SafeUint256
 from config import DECIMALS, HALF_DECIMALS, PRECISION
 
@@ -83,5 +84,44 @@ namespace FixedPoint:
         let (local c : Uint256, _) = SafeUint256.div_rem(scaled_num, den)
 
         return (c)
+    end
+
+    # x^y where x is fixed point representation and y is an integer
+    @view
+    func integer_pow{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+            base : Uint256, exponent : Uint256) -> (c : Uint256):
+        alloc_locals
+
+        let (local is_zero : felt) = uint256_eq(exponent, Uint256(0, 0))
+        if is_zero == TRUE:
+            return (1)
+        end
+
+        let (local is_one : felt) = uint256_eq(exponent, Uint256(1, 0))
+        if is_one == TRUE:
+            return (base)
+        end
+
+        let (local product : Uint256) = _recurse_integer_pow(base, base, exponent)
+
+        return (product)
+    end
+
+    @view
+    func _recurse_integer_pow{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+            current_product : Uint256, base : Uint256, exponent : Uint256) -> (c : Uint256):
+        alloc_locals
+
+        let (local is_one : felt) = uint256_eq(exponent, Uint256(1, 0))
+        if is_one == TRUE:
+            return (current_product)
+        end
+
+        let (local new_product : Uint256) = mul(current_product, base)
+
+        let (local new_exponent : Uint256) = SafeUint256.sub(exponent, 1)
+        let (local final_product : Uint256) = _recurse_integer_pow(new_product, base, new_exponent)
+
+        return (final_product)
     end
 end
