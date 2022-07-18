@@ -6,7 +6,7 @@
 
 from starkware.cairo.common.uint256 import Uint256
 from openzeppelin.security.safemath import SafeUint256
-from config import DECIMALS, PRECISION
+from config import DECIMALS, HALF_DECIMALS, PRECISION
 
 namespace FixedPoint:
     @view
@@ -19,6 +19,7 @@ namespace FixedPoint:
         return (b)
     end
 
+    # computes the integer floor given DECIMALS
     @view
     func floor{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(a : Uint256) -> (
             floor : Uint256):
@@ -28,5 +29,27 @@ namespace FixedPoint:
         let (local floor : Uint256) = SafeUint256.mul(b, DECIMALS)
 
         return (floor)
+    end
+
+    # Change scaling factor to half the decimal places
+    @view
+    func half_scaling{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+            a : Uint256) -> (b : Uint256):
+        alloc_locals
+
+        let (local b : Uint256, _) = SafeUint256.div_rem(a, HALF_DECIMALS)
+
+        return (b)
+    end
+
+    # Change scaling factor to double the decimal places
+    @view
+    func double_scaling{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+            a : Uint256) -> (b : Uint256):
+        alloc_locals
+
+        let (local b : Uint256, _) = SafeUint256.mul(a, DECIMALS)
+
+        return (b)
     end
 end
