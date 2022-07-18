@@ -1,7 +1,7 @@
+fixed_point/
+
 .DS_Store
 .temp/
-
-fixed_point/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
