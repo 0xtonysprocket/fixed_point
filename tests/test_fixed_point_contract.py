@@ -127,110 +127,58 @@ async def test_diff_and_sign_true(fp_factory):
     assert res.result[1] == 1
 
 
-'''
-@given(
-    x=st.integers(min_value=1, max_value=100000),
-    y=st.integers(min_value=1, max_value=100000),
-    z=st.integers(min_value=1, max_value=100000),
-    k=st.integers(min_value=1, max_value=100000),
-)
-@settings(deadline=None)
 @pytest.mark.asyncio
-async def test_ratio_le_eq(fp_factory, x, y, z, k):
+async def test_mul(fp_factory):
     fixed_point = fp_factory
 
-    base = (to_uint(x), to_uint(y))  # x/y
-    other = (to_uint(z), to_uint(k))  # z/k
+    a = to_uint(2345152673865427896541)
+    b = to_uint(768102938476645378273)
 
-    root = await fixed_point.ratio_less_than_or_eq(base, other).call()
-    print(root.result)
-    print(root.result[0])
-    assert root.result[0] == (1 if x / y <= z / k else 0)
+    res = await fixed_point.mul(a, b).call()
+    assert from_uint(res.result[0]) == 2345152673865 * 768102938476
 
 
 @given(
-    x=st.integers(min_value=1, max_value=100000),
-    y=st.integers(min_value=1, max_value=100000),
-    z=st.integers(min_value=1, max_value=100000),
-    k=st.integers(min_value=1, max_value=100000),
+    x=st.integers(min_value=10**10, max_value=10**45),
+    y=st.integers(min_value=10**10, max_value=10**45),
 )
 @settings(deadline=None)
 @pytest.mark.asyncio
-async def test_ratio_mul(fp_factory, x, y, z, k):
-    ratio = fp_factory
+async def test_hyp_mul(fp_factory, x, y):
+    fixed_point = fp_factory
 
-    base = (to_uint(x), to_uint(y))  # x/y
-    other = (to_uint(z), to_uint(k))  # exponent
+    a = to_uint(x)
+    b = to_uint(y)
 
-    root = await ratio.ratio_mul(base, other).call()
-    assert (from_uint(root.result[0][0]), from_uint(root.result[0][1])) == (
-        x * z,
-        y * k,
+    res = await fixed_point.mul(a, b).call()
+    assert from_uint(res.result[0]) == (x // HALF_DECIMALS) * (y // HALF_DECIMALS)
+
+
+@pytest.mark.asyncio
+async def test_div(fp_factory):
+    fixed_point = fp_factory
+
+    a = to_uint(2345152673865427896541)
+    b = to_uint(768102938476645378273)
+
+    res = await fixed_point.div(a, b).call()
+    assert (
+        from_uint(res.result[0])
+        == (2345152673865427896541 * DECIMALS) // 768102938476645378273
     )
 
 
 @given(
-    x=st.integers(min_value=1, max_value=100),
-    y=st.integers(min_value=1, max_value=100),
-    z=st.integers(min_value=1, max_value=9),
+    x=st.integers(min_value=10**10, max_value=10**45),
+    y=st.integers(min_value=10**10, max_value=10**45),
 )
 @settings(deadline=None)
 @pytest.mark.asyncio
-async def test_ratio_pow(fp_factory, x, y, z):
-    ratio = fp_factory
+async def test_hyp_div(fp_factory, x, y):
+    fixed_point = fp_factory
 
-    base = (to_uint(x), to_uint(y))  # x/y
-    power = to_uint(z)  # exponent
+    a = to_uint(x)
+    b = to_uint(y)
 
-    root = await ratio.ratio_pow(base, power).call()
-    assert (from_uint(root.result[0][0]), from_uint(root.result[0][1])) == (
-        x**z,
-        y**z,
-    )
-
-
-"""
-"""
-
-
-@given(
-    x=st.integers(min_value=1, max_value=100000),
-    y=st.integers(min_value=1, max_value=100000),
-    z=st.integers(min_value=1, max_value=100000),
-    k=st.integers(min_value=1, max_value=100000),
-)
-@settings(deadline=None)
-@pytest.mark.asyncio
-async def test_ratio_add(fp_factory, x, y, z, k):
-    ratio = fp_factory
-
-    base = (to_uint(x), to_uint(y))  # x/y
-    other = (to_uint(z), to_uint(k))  # exponent
-
-    root = await ratio.ratio_add(base, other).call()
-    assert (from_uint(root.result[0][0]), from_uint(root.result[0][1])) == (
-        (x * k + y * z, y * k) if y != k else (x + z, y)
-    )
-
-
-@given(
-    x=st.integers(min_value=1, max_value=10000),
-    y=st.integers(min_value=1, max_value=10000),
-    m=st.integers(min_value=1, max_value=7),
-    p=st.integers(min_value=5, max_value=11),
-)
-@settings(deadline=None)
-@pytest.mark.asyncio
-async def test_nth_root_by_digit(fp_factory, x, y, m, p):
-    ratio = fp_factory
-
-    base = (to_uint(x), to_uint(y))  # x/y
-    root = to_uint(m)  # which root
-    precision = p  # how many digits
-
-    root = await ratio.nth_root_by_digit(base, root, precision).call()
-    res = math.floor(((x / y) ** (1 / m)) * 10**p) / (10**p)
-    assert (from_uint(root.result[0][0]) / from_uint(root.result[0][1]) - res) < (
-        5 / (10**p)
-    )
-    '''
+    res = await fixed_point.div(a, b).call()
+    assert from_uint(res.result[0]) == (x * DECIMALS) // y
