@@ -8,7 +8,8 @@ from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.uint256 import Uint256, uint256_eq, uint256_le
 from starkware.cairo.common.bool import TRUE, FALSE
 from openzeppelin.security.safemath import SafeUint256
-from config import DECIMALS, HALF_DECIMALS, PRECISION, MAX_DECIMAL_POW_BASE, MIN_DECIMAL_POW_BASE
+from contracts.config import (
+    DECIMALS, HALF_DECIMALS, PRECISION, MAX_DECIMAL_POW_BASE, MIN_DECIMAL_POW_BASE)
 
 namespace FixedPoint:
     @view
