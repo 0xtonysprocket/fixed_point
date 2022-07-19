@@ -95,6 +95,73 @@
                 "type": "Uint256"
             }
         ],
+        "name": "add",
+        "outputs": [
+            {
+                "name": "c",
+                "type": "Uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "a",
+                "type": "Uint256"
+            },
+            {
+                "name": "b",
+                "type": "Uint256"
+            }
+        ],
+        "name": "sub",
+        "outputs": [
+            {
+                "name": "c",
+                "type": "Uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "a",
+                "type": "Uint256"
+            },
+            {
+                "name": "b",
+                "type": "Uint256"
+            }
+        ],
+        "name": "diff_and_sign",
+        "outputs": [
+            {
+                "name": "c",
+                "type": "Uint256"
+            },
+            {
+                "name": "bool",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "a",
+                "type": "Uint256"
+            },
+            {
+                "name": "b",
+                "type": "Uint256"
+            }
+        ],
         "name": "mul",
         "outputs": [
             {
@@ -123,6 +190,155 @@
                 "type": "Uint256"
             }
         ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "base",
+                "type": "Uint256"
+            },
+            {
+                "name": "exponent",
+                "type": "Uint256"
+            }
+        ],
+        "name": "integer_pow",
+        "outputs": [
+            {
+                "name": "c",
+                "type": "Uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "current_product",
+                "type": "Uint256"
+            },
+            {
+                "name": "base",
+                "type": "Uint256"
+            },
+            {
+                "name": "exponent",
+                "type": "Uint256"
+            }
+        ],
+        "name": "_recursive_integer_pow",
+        "outputs": [
+            {
+                "name": "c",
+                "type": "Uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "base",
+                "type": "Uint256"
+            },
+            {
+                "name": "exponent",
+                "type": "Uint256"
+            },
+            {
+                "name": "precision",
+                "type": "Uint256"
+            }
+        ],
+        "name": "bounded_decimal_pow",
+        "outputs": [
+            {
+                "name": "result",
+                "type": "Uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "base_minus_one",
+                "type": "Uint256"
+            },
+            {
+                "name": "exponent",
+                "type": "Uint256"
+            },
+            {
+                "name": "precision",
+                "type": "Uint256"
+            },
+            {
+                "name": "previous_element",
+                "type": "Uint256"
+            },
+            {
+                "name": "index",
+                "type": "Uint256"
+            },
+            {
+                "name": "current_sum",
+                "type": "Uint256"
+            },
+            {
+                "name": "base_minus_center_sign",
+                "type": "felt"
+            },
+            {
+                "name": "previous_sign",
+                "type": "felt"
+            }
+        ],
+        "name": "_recursive_decimal_pow",
+        "outputs": [
+            {
+                "name": "final_sum",
+                "type": "Uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "base",
+                "type": "Uint256"
+            },
+            {
+                "name": "exponent",
+                "type": "Uint256"
+            }
+        ],
+        "name": "bounded_pow",
+        "outputs": [
+            {
+                "name": "result",
+                "type": "Uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "base",
+                "type": "Uint256"
+            }
+        ],
+        "name": "assert_base_within_bound",
+        "outputs": [],
         "stateMutability": "view",
         "type": "function"
     }

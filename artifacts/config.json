@@ -25,6 +25,14 @@
                 "type": "const",
                 "value": 1000000000
             },
+            "__main__.MAX_DECIMAL_POW_BASE": {
+                "type": "const",
+                "value": 1999999999999999999
+            },
+            "__main__.MIN_DECIMAL_POW_BASE": {
+                "type": "const",
+                "value": 1
+            },
             "__main__.PRECISION": {
                 "type": "const",
                 "value": 1000000000
