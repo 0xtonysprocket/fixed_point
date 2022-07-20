@@ -1,6 +1,10 @@
 import pytest
+from decimal import *
 from hypothesis import given, strategies as st, settings
 from .conftest import DECIMALS, HALF_DECIMALS
+
+# set decimal precision
+getcontext().prec = 18  # 18 digits
 
 # from OZ utils.py
 def to_uint(a):
@@ -182,3 +186,35 @@ async def test_hyp_div(fp_factory, x, y):
 
     res = await fixed_point.div(a, b).call()
     assert from_uint(res.result[0]) == (x * DECIMALS) // y
+
+
+@pytest.mark.asyncio
+async def test_bounded_pow(fp_factory):
+    fixed_point = fp_factory
+
+    # a must be between 1 and 2 * 10**18
+    a = to_uint(1152673865427896541)
+    b = to_uint(28102938476645378273)
+
+    res = await fixed_point.bounded_pow(a, b).call()
+    assert from_uint(res.result[0]) - 54216623900000000000 < 10**10
+
+
+@given(
+    x=st.integers(min_value=10**17, max_value=19 * 10**17),
+    y=st.integers(min_value=10**16, max_value=2 * 10**20),
+)
+@settings(deadline=None)
+@pytest.mark.asyncio
+async def test_hyp_bounded_pow(fp_factory, x, y):
+    fixed_point = fp_factory
+
+    # a must be between 1 and 2 * 10**18
+    a = to_uint(x)
+    b = to_uint(y)
+
+    c = Decimal(x) / 10**18
+    d = Decimal(y) / 10**18
+
+    res = await fixed_point.bounded_pow(a, b).call()
+    assert from_uint(res.result[0]) - ((c**d) * 10**18) < 10**18
