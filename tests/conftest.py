@@ -5,7 +5,7 @@ import asyncio
 from starkware.starknet.testing.starknet import Starknet
 
 # contract and library paths
-FP_CONTRACT = os.path.join(os.path.dirname(__file__), "../contracts/fp.cairo")
+FP_CONTRACT = os.path.join(os.path.dirname(__file__), "../src/fixed_point.cairo")
 
 DECIMALS = 10**18
 HALF_DECIMALS = 10**9

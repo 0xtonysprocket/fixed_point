@@ -8,7 +8,7 @@ from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.uint256 import Uint256, uint256_eq, uint256_le
 from starkware.cairo.common.bool import TRUE, FALSE
 from openzeppelin.security.safemath import SafeUint256
-from contracts.config import (
+from src.config import (
     DECIMALS, HALF_DECIMALS, PRECISION, MAX_DECIMAL_POW_BASE, MIN_DECIMAL_POW_BASE)
 
 namespace FixedPoint:
@@ -133,7 +133,7 @@ namespace FixedPoint:
 
         let (local is_zero : felt) = uint256_eq(exponent, Uint256(0, 0))
         if is_zero == TRUE:
-            return (Uint256(1, 0))
+            return (Uint256(DECIMALS, 0))
         end
 
         let (local is_one : felt) = uint256_eq(exponent, Uint256(1, 0))
@@ -220,10 +220,10 @@ namespace FixedPoint:
         let (local new_element_numerator : Uint256) = mul(previous_element, new_part_of_numerator)
         let (local new_element : Uint256) = div(new_element_numerator, n)
 
-        # equal 1 if is_negative == 1 and previous_sign == 0 or is_negative == 0 and previous_sign == 1
-        # else 0
+        # equal TRUE - previous_sign if derivative_sign == 1 and base_minus_center_sign == 0 or derivative_sign == 0 and base_minus_center_sign == 1
+        # else previous_sign
         local is_negative : felt = base_minus_center_sign + derivative_sign
-        local new_sign : felt = (2 - is_negative) * is_negative * (TRUE - previous_sign) + (TRUE - is_negative) * previous_sign
+        local new_sign : felt = ((TRUE - base_minus_center_sign) * derivative_sign + (TRUE - derivative_sign) * base_minus_center_sign) * (TRUE - previous_sign) + (base_minus_center_sign * derivative_sign + ((TRUE - base_minus_center_sign) * (TRUE - derivative_sign)) * previous_sign)
 
         let (local new_index : Uint256) = add(index, Uint256(1, 0))
 
@@ -276,6 +276,12 @@ namespace FixedPoint:
 
         let (local precision_part_pow : Uint256) = bounded_decimal_pow(
             base, precision_part_exponent, Uint256(PRECISION, 0))
+
+        let (local is_z : felt) = uint256_eq(precision_part_pow, Uint256(0, 0))
+        if is_z == 1:
+            local r : Uint256 = Uint256(2, 0)
+            return (r)
+        end
 
         let (local result : Uint256) = mul(integer_part_pow, precision_part_pow)
 

@@ -9,6 +9,7 @@ getcontext().prec = 18  # 18 digits
 # from OZ utils.py
 def to_uint(a):
     """Takes in value, returns uint256-ish tuple."""
+    a = int(a)
     return (a & ((1 << 128) - 1), a >> 128)
 
 
@@ -25,6 +26,16 @@ async def test_floor_intermediate(fp_factory):
 
     res = await fixed_point.floor_intermediate(a).call()
     assert from_uint(res.result[0]) == (2345)
+
+
+@pytest.mark.asyncio
+async def test_floor_intermediate_two(fp_factory):
+    fixed_point = fp_factory
+
+    a = to_uint(1237849000000000)
+
+    res = await fixed_point.floor_intermediate(a).call()
+    assert from_uint(res.result[0]) == (0)
 
 
 @given(
@@ -49,6 +60,16 @@ async def test_floor(fp_factory):
 
     res = await fixed_point.floor(a).call()
     assert from_uint(res.result[0]) == (2345 * DECIMALS)
+
+
+@pytest.mark.asyncio
+async def test_floor_two(fp_factory):
+    fixed_point = fp_factory
+
+    a = to_uint(1237849000000000)
+
+    res = await fixed_point.floor_intermediate(a).call()
+    assert from_uint(res.result[0]) == (0)
 
 
 @given(
@@ -94,6 +115,17 @@ async def test_add(fp_factory):
 
     res = await fixed_point.add(a, b).call()
     assert from_uint(res.result[0]) == (2345152673865427896541 + 768102938476645378273)
+
+
+@pytest.mark.asyncio
+async def test_sub(fp_factory):
+    fixed_point = fp_factory
+
+    a = to_uint(2345152673865427896541)
+    b = to_uint(768102938476645378273)
+
+    res = await fixed_point.sub(a, b).call()
+    assert from_uint(res.result[0]) == (2345152673865427896541 - 768102938476645378273)
 
 
 @pytest.mark.asyncio
@@ -197,7 +229,19 @@ async def test_bounded_pow(fp_factory):
     b = to_uint(28102938476645378273)
 
     res = await fixed_point.bounded_pow(a, b).call()
-    assert from_uint(res.result[0]) - 54216623900000000000 < 10**10
+    assert abs(from_uint(res.result[0]) - 54216623900000000000) < 10**13
+
+
+@pytest.mark.asyncio
+async def test_bounded_pow_two(fp_factory):
+    fixed_point = fp_factory
+
+    # a must be between 1 and 2 * 10**18
+    a = to_uint(1152673865427896541)
+    b = to_uint(9933330000000000)
+
+    res = await fixed_point.bounded_pow(a, b).call()
+    assert abs(from_uint(res.result[0]) - 1001412367127957810) < 5 * DECIMALS / 10**6
 
 
 @given(
@@ -217,4 +261,4 @@ async def test_hyp_bounded_pow(fp_factory, x, y):
     d = Decimal(y) / 10**18
 
     res = await fixed_point.bounded_pow(a, b).call()
-    assert from_uint(res.result[0]) - ((c**d) * 10**18) < 10**18
+    assert abs(from_uint(res.result[0]) - ((c**d) * 10**18)) < 10**18
